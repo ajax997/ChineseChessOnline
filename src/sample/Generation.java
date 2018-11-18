@@ -37,10 +37,12 @@ public class Generation {
 //            base += 70;
 //        }
 
-        for (int i = -7; i< 7; i++)
-        {
-            System.out.println("case "+String.valueOf(i) + ":");
-            //System.out.println("return new Image(\" +      "\""  +"img.png" +"\""    +");");
-        }
+//        for (int i = -7; i< 7; i++)
+//        {
+//            System.out.println("case "+String.valueOf(i) + ":");
+//            //System.out.println("return new Image(\" +      "\""  +"img.png" +"\""    +");");
+//        }
+        String str = com.sun.javafx.runtime.VersionInfo.getRuntimeVersion();
+        System.out.println(str);
     }
 }

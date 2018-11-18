@@ -1,13 +1,10 @@
 package sample;
 
-import com.sun.org.apache.regexp.internal.RE;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +14,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Controller {
-    int[][] board = new int[][]{
+
+
+
+    private int[][] board = new int[][]{
             {5, 4, 3, 2, 1, 2, 3, 4, 5},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 6, 0, 0, 0, 0, 0, 6, 0},
@@ -133,28 +133,31 @@ public class Controller {
     public ImageView r9c10;
 
 
-
     /////////////////////////
     private static int PORT = 8901;
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private boolean turn;
 
 
-    public void setupConnection() throws IOException {
+    private void setupConnection() throws IOException {
         socket = new Socket("localhost", PORT);
         in = new BufferedReader(new InputStreamReader(
                 socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    public void play() throws Exception {
+    private void play() throws Exception {
         String response;
         try {
             while (true) {
                 response = in.readLine();
                 System.out.println(response);
+                if(response.startsWith("TURN"))
+                    turn = true;
                 if (response.startsWith("MOVE")) {
+                    turn = true;
                     response = response.substring(5);
                     int[][] _board = new int[10][9];
                     String[] x = response.split(" ");
@@ -166,9 +169,9 @@ public class Controller {
                     }
                     drawBoard(_board);
                 }
+
             }
-        }
-        finally {
+        } finally {
             socket.close();
         }
     }
@@ -702,102 +705,145 @@ public class Controller {
         r9c10.setAccessibleText("8c9");
         imageViews.add(r9c10);
     }
-    public void test()
-    {
-        int[][] t_board = new int[][]{
-                {5, 4, 3, 2, 1, 2, 3, 4, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 6, 0, 0, 0, 0, 0, 6, 5},
-                {7, 0, 7, 0, 7, 0, 7, 0, 7},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {-7, 0, -7, 0, -7, 0, -7, 0, -7},
-                {0, -6, 0, 0, 0, 0, -4, -6, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {-5, -4, -3, -2, -1, -2, -3, 0, -5}};
-        drawBoard(t_board);
+
+    public void print() {
+       for(int i = 0; i< 10; i++)
+       {
+           for (int j = 0; j < 9; j++)
+               System.out.print(board[i][j]+ " ");
+           System.out.println();
+
+       }
+
     }
-    private void sendMove()
-    {
+
+    private void sendMove() {
+        int[][] _board = reversed(board);
         StringBuilder sendContent = new StringBuilder();
         sendContent.append("MOVE ");
-        for (int i = 0; i< 10; i++)
-        {
-            for (int j = 0; j< 9; j++)
-                sendContent.append(String.valueOf(board[i][j])).append(" ");
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 9; j++)
+                sendContent.append(String.valueOf(_board[i][j])).append(" ");
         }
         out.println(sendContent.toString());
-
+        turn = false;
     }
 
-    public ImageView getImageView(int r, int c)
-    {
-        String index= String.valueOf(r) + "c" + String.valueOf(c);
-        for (ImageView view: imageViews) {
+    private ImageView getImageView(int r, int c) {
+        String index = String.valueOf(r) + "c" + String.valueOf(c);
+        for (ImageView view : imageViews) {
             if (index.equals(view.getAccessibleText()))
                 return view;
         }
         return null;
     }
 
-    public void drawBoard(int[][] _board) {
+    private void drawBoard(int[][] _board) {
         for (int i = 0; i < 10; i++) {
 
             for (int j = 0; j < 9; j++) {
                 getImageView(j, i).setImage(getIcon(_board[i][j]));
             }
         }
-        board = _board;
+        board = reversedNegative(_board);
     }
 
 
-    private int c = 0,r = 0;
+    private int[][] reversed(int[][] _board) {
+        int[][] res = new int[10][9];
+        for (int i = 0; i < 10; i++)
+            System.arraycopy(_board[i], 0, res[9 - i], 0, 9);
+        return res;
+    }
+    private int[][] reversedNegative(int[][] _board) {
+        int[][] res = new int[10][9];
+        for (int i = 0; i < 10; i++)
+            for (int j = 0; j< 9; j++)
+            {
+                res[i][j] = -_board[i][j];
+            }
+        return res;
+    }
+
+    private boolean validMove(int r, int c, int _r, int _c) {
+        int obj = board[r][c];
+        switch (obj) {
+            case -1:
+                return RuleHelper.kingMoveValid(r, c, _r, _c, board);
+            case -2:
+                return RuleHelper.guardMoveValid(r, c, _r, _c, board);
+            case -3:
+                return RuleHelper.elephantMoveValid(r, c, _r, _c, board);
+            case -4:
+                return RuleHelper.horseMoveValid(r, c, _r, _c, board);
+            case -5:
+                return RuleHelper.carMoveValid(r, _r, c, _c, board);
+            case -6:
+                return RuleHelper.canonMoveValid(r, c, _r, _c, board);
+            case -7:
+                return RuleHelper.chotMoveValid(r, c, _r, _c, board);
+
+        }
+        return false;
+    }
+
+
+    private int c = 0, r = 0;
+
     public void mouseClick(MouseEvent event) {
+        if(!turn)
+            return;
+
         String text;
         if (!alreadyClicked) {
+            System.out.println("Target changed");
             clickedImage = (ImageView) event.getSource();
             text = clickedImage.getAccessibleText();
-            r = (int) text.charAt(0)-48;
-            c = (int) text.charAt(2)-48;
-            if (board[c][r] == 0)
+            r = (int) text.charAt(0) - 48;
+            c = (int) text.charAt(2) - 48;
+
+            if (board[c][r] == 0 || board[c][r] > 0)
                 return;
             alreadyClicked = true;
-            circle.setCenterX(clickedImage.getX()+48);
-            circle.setCenterY(clickedImage.getY()+46);
+            circle.setCenterX(clickedImage.getX() + 48);
+            circle.setCenterY(clickedImage.getY() + 46);
             circle.setRadius(30.0f);
             circle.setFill(Color.RED);
 
         } else {
+            print();
             ImageView imageView = (ImageView) event.getSource();
             String c_text = imageView.getAccessibleText();
-            int c_r = (int) c_text.charAt(0)-48;
-            int c_c = (int) c_text.charAt(2)-48;
+            int c_r = (int) c_text.charAt(0) - 48 ;
+            int c_c = (int) c_text.charAt(2) - 48;
 
-            if((board[c_c][c_r] < 0 && board[c][r]<0) || ((board[c_c][c_r] > 0 && board[c][r]>0)))
-            {
+            if ((board[c_c][c_r] < 0 && board[c][r] < 0) || ((board[c_c][c_r] > 0 && board[c][r] > 0))) {
                 clickedImage = (ImageView) event.getSource();
                 text = clickedImage.getAccessibleText();
-                r = (int) text.charAt(0)-48;
-                c = (int) text.charAt(2)-48;
-                circle.setCenterX(clickedImage.getX()+48);
-                circle.setCenterY(clickedImage.getY()+46);
+                r = (int) text.charAt(0) - 48 ;
+                c = (int) text.charAt(2) - 48 ;
+                circle.setCenterX(clickedImage.getX() + 48);
+                circle.setCenterY(clickedImage.getY() + 46);
                 circle.setRadius(28.0f);
                 circle.setFill(Color.RED);
                 return;
             }
 
-
-            imageView.setImage(clickedImage.getImage());
-            clickedImage.setImage(null);
-            alreadyClicked = false;
-
             System.out.println(r);
             System.out.println(c);
-            System.out.println(c_c);
             System.out.println(c_r);
-            board[c_c][c_r] = board[c][r];
-            board[c][r] = 0;
-            sendMove();
+            System.out.println(c_c);
+            boolean valid = validMove(c,r, c_c, c_r);
+
+            System.out.println(valid);
+            if (valid) {
+                imageView.setImage(clickedImage.getImage());
+                clickedImage.setImage(null);
+                alreadyClicked = false;
+                board[c_c][c_r] = board[c][r];
+                board[c][r] = 0;
+                sendMove();
+            }
         }
     }
 }

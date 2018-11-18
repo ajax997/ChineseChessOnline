@@ -8,10 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import java.util.logging.LogManager;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        LogManager logger = LogManager.getLogManager();
+        logger.reset();
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
         String image = Main.class.getResource("background.jpg").toExternalForm();
@@ -24,7 +28,6 @@ public class Main extends Application {
         primaryStage.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println(String.valueOf( mouseEvent.getSceneX() + " |" + mouseEvent.getSceneY()) );
             }
         });
     }

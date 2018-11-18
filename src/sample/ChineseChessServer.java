@@ -6,11 +6,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-public class TicTacToeServer {
+public class ChineseChessServer {
 
     public static void main(String[] args) throws Exception {
         ServerSocket listener = new ServerSocket(8901);
-        System.out.println("Tic Tac Toe Server is Running");
+        System.out.println("Server is Running");
         try {
             while (true) {
                 Game game = new Game();
@@ -29,60 +29,22 @@ public class TicTacToeServer {
 }
 
 class Game {
-    // a board of 9 squares
-    private Player[] board = {
-        null, null, null,
-        null, null, null,
-        null, null, null};
 
-    //current player
     Player currentPlayer;
-
-    // winner
-    public boolean hasWinner() {
-        return
-            (board[0] != null && board[0] == board[1] && board[0] == board[2])
-          ||(board[3] != null && board[3] == board[4] && board[3] == board[5])
-          ||(board[6] != null && board[6] == board[7] && board[6] == board[8])
-          ||(board[0] != null && board[0] == board[3] && board[0] == board[6])
-          ||(board[1] != null && board[1] == board[4] && board[1] == board[7])
-          ||(board[2] != null && board[2] == board[5] && board[2] == board[8])
-          ||(board[0] != null && board[0] == board[4] && board[0] == board[8])
-          ||(board[2] != null && board[2] == board[4] && board[2] == board[6]);
-    }
-
-    // no empty squares
-    public boolean boardFilledUp() {
-        for (int i = 0; i < board.length; i++) {
-            if (board[i] == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-    // thread when player tries a move
-    public synchronized boolean legalMove(int location, Player player) {
-        if (player == currentPlayer && board[location] == null) {
-            board[location] = currentPlayer;
-            currentPlayer = currentPlayer.opponent;
-
-            return true;
-        }
-        return false;
-    }
     class Player extends Thread {
         char mark;
         Player opponent;
         Socket socket;
         BufferedReader input;
         PrintWriter output;
+
         // thread handler to initialize stream fields
-        public Player(Socket socket, char mark) {
+        Player(Socket socket, char mark) {
             this.socket = socket;
             this.mark = mark;
             try {
                 input = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+                        new InputStreamReader(socket.getInputStream()));
                 output = new PrintWriter(socket.getOutputStream(), true);
                 output.println("WELCOME " + mark);
                 output.println("MESSAGE Waiting for opponent to connect");
@@ -90,15 +52,13 @@ class Game {
                 System.out.println("Player died: " + e);
             }
         }
+
         //Accepts notification of who the opponent is.
-        public void setOpponent(Player opponent) {
+        void setOpponent(Player opponent) {
             this.opponent = opponent;
         }
 
-        
-         //Handles the otherPlayerMoved message. 
-
-    
+        //Handles the otherPlayerMoved message.
         public void run() {
             try {
                 // The thread is only started after everyone connects.
@@ -106,19 +66,21 @@ class Game {
 
                 // Tell the first player that it is his/her turn.
                 if (mark == 'X') {
-                    output.println("MESSAGE Your move");
+                    output.println("TURN");
                 }
 
                 // Repeatedly get commands from the client and process them.
                 while (true) {
                     String command = input.readLine();
                     opponent.output.println(command);
-
                 }
             } catch (IOException e) {
                 System.out.println("Player died: " + e);
             } finally {
-                try {socket.close();} catch (IOException ignored) {}
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }
