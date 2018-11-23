@@ -6,70 +6,28 @@ package sample;
 public class RuleHelper {
     public static boolean horseMoveValid(int r, int c, int _r, int _c, int[][] board) {
 
-        if (_r > r && Math.abs(_c - c) == 1 && Math.abs(_r - r) == 2) {
-            if (_c > c) {
-                if (board[_c - 1][_r + 1] == 0)
-                    return true;
-            } else {
-                if (board[_c + 1][_r + 1] == 0)
-                    return true;
-            }
-
-        }
-        if (_r > r && Math.abs(_c - c) == 2 && Math.abs(_r - r) == 1) {
-            if (_r - r == 1 && board[c - 1][r] == 0)
-                return true;
-            if (_r - r == 1 && board[c + 1][r] == 0)
-                return true;
-
-        }
-
-        if (_r < r && Math.abs(_c - c) == 1 && Math.abs(_r - r) == 2) {
-            if (_c > c) {
-                if (board[_c - 1][_r - 1] == 0)
-                    return true;
-            } else {
-                if (board[_c + 1][_r - 1] == 0)
-                    return true;
-            }
-        }
-        if (_r < r && Math.abs(_c - c) == 2 && Math.abs(_r - r) == 1) {
-
-            if (_c > c && board[c - 1][r + 1] == 0)
-                return true;
-
-            return _c < c && board[c - 1][r - 1] == 0;
-        }
+        if (r - 2 == _r && c + 1 == _c && board[r - 1][c] == 0)
+            return true;
+        if (r - 2 == _r && c - 1 == _c && board[r - 1][c] == 0)
+            return true;
+        if (r - 1 == _r && c + 2 == _c && board[r][c + 1] == 0)
+            return true;
+        if (r - 1 == _r && c - 2 == _c && board[r][c - 1] == 0)
+            return true;
+/////////////////////////////////////////////////////////////////////////
+        if (r + 2 == _r && c + 1 == _c && board[r + 1][c] == 0)
+            return true;
+        if (r + 2 == _r && c - 1 == _c && board[r + 1][c] == 0)
+            return true;
+        if (r + 1 == _r && c + 2 == _c && board[r + 1][c + 1] == 0)
+            return true;
+        if (r + 1 == _r && c - 2 == _c & board[r + 1][c - 1] == 0)
+            return true;
         return false;
 
     }
 
-    public static boolean carMoveValid(int r, int _r, int c, int _c, int[][] board) {
-        if (_r != r && _c != c)
-            return false;
-        if (_r != r) {
-            if (_r > r) {
-                for (int i = r; i < _r; i++)
-                    if (board[i][_c] != 0)
-                        return false;
-            } else {
-                for (int i = _r; i < r; i++)
-                    if (board[i][_c] != 0)
-                        return false;
-            }
-        } else {
-            if (_c > c) {
-                for (int i2 = c; i2 < _c; i2++)
-                    if (board[i2][_r] != 0)
-                        return false;
-            } else {
-                for (int i2 = _c; i2 < c; i2++)
-                    if (board[r][i2] != 0)
-                        return false;
-            }
-        }
-        return true;
-    }
+
 
     public static boolean kingMoveValid(int r, int c, int _r, int _c, int[][] board) {
 
@@ -89,6 +47,8 @@ public class RuleHelper {
     }
 
     public static boolean elephantMoveValid(int r, int c, int _r, int _c, int[][] board) {
+        if(_r<5)
+            return false;
         if (Math.abs(_r - r) != 2)
             return false;
         if (Math.abs(_c - c) != 2)
@@ -99,48 +59,57 @@ public class RuleHelper {
 
 
         return false;
-
     }
 
+    public static boolean carMoveValid(int r, int _r, int c, int _c, int[][] board) {
+        if (_r != r && _c != c)
+            return false;
+
+        if (_r != r) {
+            if (_r > r) {
+                for (int i = r+1; i < _r; i++)
+                    if (board[i][_c] != 0)
+                        return false;
+                return true;
+            } else {
+                for (int i = _r+1; i < r; i++)
+                    if (board[i][_c] != 0)
+                        return false;
+                return true;
+            }
+        } else {
+            if (_c > c) {
+                for (int i2 = c+1; i2 < _c; i2++)
+                    if (board[_r][i2] != 0)
+                        return false;
+                return true;
+            } else {
+                for (int i2 = _c+1; i2 < c; i2++)
+                    if (board[_r][i2] != 0)
+                        return false;
+                return true;
+            }
+        }
+    }
     public static boolean canonMoveValid(int r, int c, int _r, int _c, int[][] board) {
         if (_r != r && _c != c)
             return false;
 
         if (board[_r][_c] == 0) {
-            if (_r != r) {
-                if (_r > r) {
-                    for (int i = r; i < _r; i++)
-                        if (board[i][_c] != 0)
-                            return false;
-                } else {
-                    for (int i = _r; i < r; i++)
-                        if (board[i][_c] != 0)
-                            return false;
-                }
-            } else {
-                if (_c > c) {
-                    for (int i2 = c; i2 < _c; i2++)
-                        if (board[i2][_r] != 0)
-                            return false;
-                } else {
-                    for (int i2 = _c; i2 < c; i2++)
-                        if (board[r][i2] != 0)
-                            return false;
-                }
-            }
+            return carMoveValid(r, _r, c, _c, board);
         }
 
         if (board[_r][_c] > 0) {
             if (_r != r) {
                 if (_r > r) {
                     int n = 0;
-                    for (int i = r; i < _r; i++)
+                    for (int i = r+1; i < _r; i++)
                         if (board[i][_c] != 0)
                             n += 1;
                     return n == 1;
                 } else {
                     int n = 0;
-                    for (int i = _r; i < r; i++)
+                    for (int i = _r+1; i < r; i++)
                         if (board[i][_c] != 0)
                             n += 1;
                     return n == 1;
@@ -148,13 +117,13 @@ public class RuleHelper {
             } else {
                 if (_c > c) {
                     int n = 0;
-                    for (int i2 = c; i2 < _c; i2++)
+                    for (int i2 = c+1; i2 < _c; i2++)
                         if (board[i2][_r] != 0)
                             n += 1;
                     return n == 1;
                 } else {
                     int n = 0;
-                    for (int i2 = _c; i2 < c; i2++)
+                    for (int i2 = _c+1; i2 < c; i2++)
                         if (board[r][i2] != 0)
                             n += 1;
                     return n == 1;
