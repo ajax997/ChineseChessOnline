@@ -1,0 +1,39 @@
+.bodybg{
+    -fx-background-image: url("/sample/mainWindow/images/home.jpg");
+    -fx-background-size: 100% 100%;
+}
+
+.onlineButton{
+    -fx-background-image: url('/sample/mainWindow/images/mode1.png');
+    -fx-background-size: 100% 100%;
+}
+
+.offlineButton{
+    -fx-background-image: url('/sample/mainWindow/images/mode1.png');
+    -fx-background-size: 100% 100%;
+}
+
+.exitButton{
+    -fx-background-image: url('/sample/mainWindow/images/exit.jpg');
+    -fx-background-size: 100% 100%;
+}
+
+.button {
+    -fx-background-color: transparent;
+}
+
+.loginForm{
+
+}
+
+.loginButton:hover{
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-scale-z: 1.05;
+}
+
+.closeButton:hover{
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+    -fx-scale-z: 1.2;
+}

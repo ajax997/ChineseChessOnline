@@ -1,20 +1,26 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Controller {
-
 
 
     private int[][] board = new int[][]{
@@ -28,6 +34,11 @@ public class Controller {
             {0, -6, 0, 0, 0, 0, 0, -6, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {-5, -4, -3, -2, -1, -2, -3, -4, -5}};
+
+
+    public ImageView enemy_icon, home_icon;
+    public Label whichTurn;
+    public AnchorPane main;
     private boolean alreadyClicked = false;
     private ImageView clickedImage = null;
     private ArrayList<ImageView> imageViews = new ArrayList<ImageView>();
@@ -140,7 +151,6 @@ public class Controller {
     private PrintWriter out;
     private boolean turn;
 
-
     private void setupConnection() throws IOException {
         socket = new Socket("localhost", PORT);
         in = new BufferedReader(new InputStreamReader(
@@ -148,16 +158,29 @@ public class Controller {
         out = new PrintWriter(socket.getOutputStream(), true);
     }
 
+    public String user;
+    public void setUser(String user)
+    {
+        this.user = user;
+    }
     private void play() throws Exception {
         String response;
         try {
             while (true) {
                 response = in.readLine();
                 System.out.println(response);
-                if(response.startsWith("TURN"))
+                if(response.startsWith("NAME"))
+                {
+                    //TODO
+                }
+
+                if (response.startsWith("TURN")) {
                     turn = true;
+                    setTurn();
+                }
                 if (response.startsWith("MOVE")) {
                     turn = true;
+                    setTurn();
                     response = response.substring(5);
                     int[][] _board = new int[10][9];
                     String[] x = response.split(" ");
@@ -168,6 +191,7 @@ public class Controller {
                         }
                     }
                     drawBoard(_board);
+
                 }
 
             }
@@ -176,21 +200,31 @@ public class Controller {
         }
     }
 
+    private void setTurn()
+    {
+       Platform.runLater(() -> {
+           String s = turn?"YOUR TURN":"OPPOSITE TURN";
+           whichTurn.setText(s);
+
+       });
+
+    }
+
+
     public void initialize() {
+
+
         prepare();
         try {
             setupConnection();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    play();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Thread thread = new Thread(() -> {
+            try {
+                play();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
         thread.start();
@@ -707,14 +741,12 @@ public class Controller {
     }
 
     public void print() {
-       for(int i = 0; i< 10; i++)
-       {
-           for (int j = 0; j < 9; j++)
-               System.out.print(board[i][j]+ " ");
-           System.out.println();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 9; j++)
+                System.out.print(board[i][j] + " ");
+            System.out.println();
 
-       }
-
+        }
     }
 
     private void sendMove() {
@@ -727,6 +759,8 @@ public class Controller {
         }
         out.println(sendContent.toString());
         turn = false;
+        setTurn();
+        whichTurn.setText("Opposite Turn");
     }
 
     private ImageView getImageView(int r, int c) {
@@ -755,15 +789,16 @@ public class Controller {
             System.arraycopy(_board[i], 0, res[9 - i], 0, 9);
         return res;
     }
+
     private int[][] reversedNegative(int[][] _board) {
         int[][] res = new int[10][9];
         for (int i = 0; i < 10; i++)
-            for (int j = 0; j< 9; j++)
-            {
+            for (int j = 0; j < 9; j++) {
                 res[i][j] = -_board[i][j];
             }
         return res;
     }
+
 
     private boolean validMove(int r, int c, int _r, int _c) {
         int obj = board[r][c];
@@ -791,7 +826,7 @@ public class Controller {
     private int c = 0, r = 0;
 
     public void mouseClick(MouseEvent event) {
-        if(!turn)
+        if (!turn)
             return;
 
         String text;
@@ -814,14 +849,14 @@ public class Controller {
             print();
             ImageView imageView = (ImageView) event.getSource();
             String c_text = imageView.getAccessibleText();
-            int c_r = (int) c_text.charAt(0) - 48 ;
+            int c_r = (int) c_text.charAt(0) - 48;
             int c_c = (int) c_text.charAt(2) - 48;
 
             if ((board[c_c][c_r] < 0 && board[c][r] < 0) || ((board[c_c][c_r] > 0 && board[c][r] > 0))) {
                 clickedImage = (ImageView) event.getSource();
                 text = clickedImage.getAccessibleText();
-                r = (int) text.charAt(0) - 48 ;
-                c = (int) text.charAt(2) - 48 ;
+                r = (int) text.charAt(0) - 48;
+                c = (int) text.charAt(2) - 48;
                 circle.setCenterX(clickedImage.getX() + 48);
                 circle.setCenterY(clickedImage.getY() + 46);
                 circle.setRadius(28.0f);
@@ -833,7 +868,7 @@ public class Controller {
             System.out.println(c);
             System.out.println(c_r);
             System.out.println(c_c);
-            boolean valid = validMove(c,r, c_c, c_r);
+            boolean valid = validMove(c, r, c_c, c_r);
 
             System.out.println(valid);
             if (valid) {

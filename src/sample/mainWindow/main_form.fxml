@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" styleClass="bodybg" stylesheets="@_Login.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mainWindow.MainController">
+   <children>
+      <Button layoutX="548.0" layoutY="308.0" mnemonicParsing="false" onAction="#onlineButton" prefHeight="111.0" prefWidth="151.0" styleClass="onlineButton" stylesheets="@_Login.css" />
+      <Button layoutX="182.0" layoutY="308.0" mnemonicParsing="false" prefHeight="111.0" prefWidth="151.0" styleClass="offlineButton" stylesheets="@_Login.css" />
+      <Button layoutX="362.0" layoutY="419.0" mnemonicParsing="false" onAction="#closeGame" styleClass="exitButton" stylesheets="@_Login.css" prefHeight="111.0" prefWidth="151.0" />
+   </children>
+</AnchorPane>

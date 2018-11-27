@@ -1,20 +1,10 @@
 package sample;
 
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 public class TicTacToeClient{
 
@@ -69,8 +59,6 @@ public class TicTacToeClient{
        return false;
     }
 
-
-    
     //main
     public static void main(String[] args) throws Exception {
         while (true) {

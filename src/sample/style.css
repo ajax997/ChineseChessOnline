@@ -1,0 +1,11 @@
+#css_enemy{
+    -fx-image: url('/img/b.png');
+    -fx-background-color: #554444;
+}
+#css_home{
+    -fx-image: url('/img/r.png');
+    -fx-background-color: #554444;
+}
+#lb{
+
+}

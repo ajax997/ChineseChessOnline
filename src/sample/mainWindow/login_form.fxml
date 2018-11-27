@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="loginForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="400.0" styleClass="loginForm" stylesheets="@_Login.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mainWindow.Login_Controller">
+   <children>
+      <Button fx:id="loginButton" layoutX="138.0" layoutY="261.0" mnemonicParsing="false" onAction="#loginButtonCLicked" prefHeight="40.0" prefWidth="128.0" style="-fx-background-color: #AF8452; -fx-font-family: inherit;" styleClass="loginButton" stylesheets="@_Login.css" text="Đăng Nhập" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
+
+      <TextField fx:id="username" layoutX="55.0" layoutY="96.0" prefHeight="31.0" prefWidth="290.0" promptText="Tài khoản" style="-fx-font-family: inherit;">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <PasswordField fx:id="password" layoutX="55.0" layoutY="138.0" prefHeight="31.0" prefWidth="290.0" promptText="Mật khẩu">
+         <font>
+            <Font size="15.0" />
+         </font></PasswordField>
+      <AnchorPane prefHeight="63.0" prefWidth="400.0" style="-fx-background-color: #AF8452;">
+         <children>
+            <Label alignment="CENTER" fx:id="dialogName" contentDisplay="CENTER" layoutX="107.0" layoutY="6.0" prefHeight="60.0" prefWidth="186.0" text="Đăng nhập" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
+      <Button layoutX="330.0" layoutY="309.0" mnemonicParsing="false" onAction="#closeLoginForm" prefHeight="27.0" prefWidth="56.0" style="-fx-background-color: #FFFFFF; -fx-alignment: #A6A6A6;" styleClass="closeButton" stylesheets="@_Login.css" text="Thoát" textAlignment="JUSTIFY" textFill="#a8a8a8" />
+      <Button layoutX="138.0" layoutY="306.0" onAction="#registerButtonClicked" mnemonicParsing="false" prefHeight="40.0" prefWidth="128.0" text="Đăng Ký" />
+      <PasswordField fx:id="re_password" visible="false" layoutX="55.0" layoutY="182.0" prefHeight="31.0" prefWidth="290.0" promptText="Nhập lại Mật khẩu">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </PasswordField>
+   </children>
+</Pane>
